@@ -1,4 +1,5 @@
 require "socket/unix_socket"
+require "./message"
 
 module Spirit
   class Client
@@ -7,63 +8,64 @@ module Spirit
 
     def ping
       with_socket do |sock|
-        sock.puts "PING"
-        sock.gets.not_nil!.strip == "PONG"
+        Message.write(sock, "PING")
+        Message.read(sock) == "PONG"
       end
     end
 
     def list
       with_socket do |sock|
-        sock.puts "LIST"
-        sock.gets
+        Message.write(sock, "LIST")
+        Message.read(sock)
       end
     end
 
     def rescan
       with_socket do |sock|
-        sock.puts "RESCAN"
+        Message.write(sock, "RESCAN")
+        Message.read(sock)
       end
     end
 
     def status(process_name)
       with_socket do |sock|
-        sock.puts "STATUS #{process_name}"
-        sock.gets
+        Message.write(sock, "STATUS #{process_name}")
+        Message.read(sock)
       end
     end
 
     def start(process_name)
       with_socket do |sock|
-        sock.puts "START #{process_name}"
-        sock.gets
+        Message.write(sock, "START #{process_name}")
+        Message.read(sock)
       end
     end
 
     def stop(process_name)
       with_socket do |sock|
-        sock.puts "STOP #{process_name}"
-        sock.gets
+        Message.write(sock, "STOP #{process_name}")
+        Message.read(sock)
       end
     end
 
     def restart(process_name)
       with_socket do |sock|
-        sock.puts "RESTART #{process_name}"
-        sock.gets
+        Message.write(sock, "RESTART #{process_name}")
+        Message.read(sock)
       end
     end
 
     def log(process_name)
       with_socket do |sock|
-        sock.puts "LOG #{process_name}"
-        sock.gets
+        Message.write(sock, "LOG #{process_name}")
+        Message.read(sock)
       end
     end
 
     def tail(process_name)
       with_socket do |sock|
-        sock.puts "TAIL #{process_name}"
-        sock.gets
+        Message.write(sock, "TAIL #{process_name}")
+        Message.read(sock)
       end
     end
 

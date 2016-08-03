@@ -1,5 +1,6 @@
 require "socket"
 require "socket/unix_server"
+require "./message"
 
 module Spirit
   class Daemon
@@ -13,8 +14,8 @@ module Spirit
 
       while (sock = server.accept)
         spawn do
-          line = sock.gets.not_nil!.strip
-          parts = line.split(" ")
+          line = Message.read(sock)
+          parts = line.not_nil!.split(" ")
           command = parts[0]
           arguments = parts[1..-1]
 
@@ -22,9 +23,9 @@ module Spirit
 
           case command
           when "PING"
-            sock.puts("PONG")
+            Message.write(sock, "PONG")
           else
-            sock.puts("Bar")
+            Message.write(sock, "BAR")
           end
 
           sock.close
