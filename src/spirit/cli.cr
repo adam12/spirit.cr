@@ -1,5 +1,6 @@
 require "./process"
 require "./daemon"
+require "./client"
 
 module Spirit
   class CLI
@@ -20,13 +21,13 @@ module Spirit
     def parse_instance_command
       case @argv[0]
       when "daemon"
-        Daemon.run
+        Daemon.new("./socket").run
       when "list"
-        # client.list
-        puts "list"
+        pp Client.new("./socket").list
       when "rescan"
-        # client.rescan
-        puts "rescan"
+        pp Client.new("./socket").rescan
+      when "ping"
+        pp Client.new("./socket").ping
       when "help"
         display_help
       end
@@ -37,23 +38,17 @@ module Spirit
 
       case @argv[1]
       when "status"
-        # client.status(process_name)
-        puts "status"
+        pp Client.new("./socket").status(process_name)
       when "start"
-        # client.start(process_name)
-        puts "start"
+        pp Client.new("./socket").start(process_name)
       when "stop"
-        # client.stop(process_name)
-        puts "stop"
+        pp Client.new("./socket").stop(process_name)
       when "restart"
-        # client.restart(process_name)
-        puts "restart"
+        pp Client.new("./socket").restart(process_name)
       when "log"
-        # client.log(process_name)
-        puts "log"
+        pp Client.new("./socket").log(process_name)
       when "tail"
-        # client.tail(process_name)
-        puts "tail"
+        pp Client.new("./socket").tail(process_name)
       end
     end
 
