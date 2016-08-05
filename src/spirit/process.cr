@@ -25,24 +25,32 @@ module Spirit
     end
 
     def start
-      fork do
+      r, w = IO.pipe
+
+      child = fork do
+        r.close
+
         loop do
-          @started_at = Time.now
-
           ::Process.run(exec, chdir: working_directory) do |proc|
-            pp proc
-            @state = "running"
-            @pid = proc.pid
+            w.puts("running")
           end
-          # result = ::Process.new(exec, chdir: working_directory)
-          # pp result
-          # @state = "running"
-          # @pid = result.pid
 
-          # result.wait
-
-          sleep 1
+          sleep 1 # Dont' respawn too quickly
           @respawns += 1
+        end
+      end
+
+      @started_at = Time.now
+      @state = "running"
+      @pid = child.pid
+
+      Signal::INT.trap do
+        child.kill
+      end
+
+      spawn do
+        while (line = r.gets)
+          pp line
         end
       end
     end
