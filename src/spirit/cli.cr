@@ -1,6 +1,7 @@
 require "./process"
 require "./daemon"
 require "./client"
+require "./commands/list"
 
 module Spirit
   class CLI
@@ -23,7 +24,7 @@ module Spirit
       when "daemon"
         Daemon.new("./socket").run
       when "list"
-        pp Client.new("./socket").list
+        Spirit::Commands::List.new("./socket").execute
       when "rescan"
         pp Client.new("./socket").rescan
       when "ping"
