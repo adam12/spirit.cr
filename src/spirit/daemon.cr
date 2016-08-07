@@ -52,7 +52,7 @@ module Spirit
     #   if ended_pid = @channel.receive
     #     ended_process = ProcessRegistry.find_with_pid(ended_pid)
 
-    #     if id = 
+    #     if id =
     #   end
     # end
 
@@ -68,11 +68,45 @@ module Spirit
           case method
           when "ping"
             Message.write(sock, { result: "PONG", error: nil })
+
           when "list"
             payload = ProcessRegistry.instance.all.map do |p|
               { name: p.name, pid: p.pid, state: p.state, respawns: p.respawns }
             end
             Message.write(sock, { result: payload, error: nil })
+
+          when "rescan"
+
+          when "start"
+            name = params[0].as_s
+
+            if process = ProcessRegistry.instance.find_with_name(name)
+              process.start
+              Message.write(sock, { result: "OK", error: nil })
+            else
+              Message.write(sock, { result: nil, error: "Unable to find process with name: #{name}" })
+            end
+
+          when "stop"
+            name = params[0].as_s
+
+            if process = ProcessRegistry.instance.find_with_name(name)
+              process.stop
+              Message.write(sock, { result: "OK", error: nil })
+            else
+              Message.write(sock, { result: nil, error: "Unable to find process with name: #{name}" })
+            end
+
+          when "restart"
+            name = params[0].as_s
+
+            if process = ProcessRegistry.instance.find_with_name(name)
+              process.restart
+              Message.write(sock, { result: "OK", error: nil })
+            else
+              Message.write(sock, { result: nil, error: "Unable to find process with name: #{name}" })
+            end
+
           when "status"
             name = params[0].as_s
 

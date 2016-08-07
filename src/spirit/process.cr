@@ -3,6 +3,7 @@ require "ini"
 module Spirit
   class Process
     getter exec, name, working_directory, state, respawns
+    setter state
 
     @name : String
     @started_at : Time?
@@ -12,10 +13,11 @@ module Spirit
     @working_directory = "/"
     @config_file : String
     @status : ::Process::Status?
+    @process : ::Process
 
     def initialize(@name, @exec, @config_file)
       @name = File.basename(@name, ".conf")
-      @process = ::Process.new(exec, chdir: working_directory, shell: true, input: false, output: nil, error: nil)
+      @process = start
     end
 
     def uptime
@@ -38,6 +40,21 @@ module Spirit
 
     def run
       yield @process.output, @process.error
+    end
+
+    def stop
+      ::Process.kill(Signal::TERM, pid)
+      @state = "stopped"
+    end
+
+    def start
+      @state = "running"
+      @process = ::Process.new(exec, chdir: working_directory, shell: true, input: false, output: nil, error: nil)
+    end
+
+    def restart
+      stop
+      start
     end
 
     def self.new_from_file(file)

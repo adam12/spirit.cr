@@ -3,6 +3,9 @@ require "./daemon"
 require "./client"
 require "./commands/list"
 require "./commands/status"
+require "./commands/start"
+require "./commands/stop"
+require "./commands/restart"
 
 module Spirit
   class CLI
@@ -41,11 +44,11 @@ module Spirit
       when "status"
         Spirit::Commands::Status.new(@socket_file).execute(process_name)
       when "start"
-        pp Client.new(@socket_file).start(process_name)
+        Spirit::Commands::Start.new(@socket_file).execute(process_name)
       when "stop"
-        pp Client.new(@socket_file).stop(process_name)
+        Spirit::Commands::Stop.new(@socket_file).execute(process_name)
       when "restart"
-        pp Client.new(@socket_file).restart(process_name)
+        Spirit::Commands::Restart.new(@socket_file).execute(process_name)
       when "log"
         pp Client.new(@socket_file).log(process_name)
       when "tail"
