@@ -73,6 +73,14 @@ module Spirit
               { name: p.name, pid: p.pid, state: p.state, respawns: p.respawns }
             end
             Message.write(sock, { result: payload, error: nil })
+          when "status"
+            name = params[0].as_s
+
+            if process = ProcessRegistry.instance.find_with_name(name)
+              Message.write(sock, { result: process.state, error: nil })
+            else
+              Message.write(sock, { result: nil, error: "Unable to find process with name: #{name}" })
+            end
           else
             Message.write(sock, { result: "BAR", error: nil })
           end

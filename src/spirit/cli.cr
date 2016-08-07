@@ -2,6 +2,7 @@ require "./process"
 require "./daemon"
 require "./client"
 require "./commands/list"
+require "./commands/status"
 
 module Spirit
   class CLI
@@ -38,7 +39,7 @@ module Spirit
     def parse_process_command(process_name, command)
       case command
       when "status"
-        pp Client.new(@socket_file).status(process_name)
+        Spirit::Commands::Status.new(@socket_file).execute(process_name)
       when "start"
         pp Client.new(@socket_file).start(process_name)
       when "stop"
