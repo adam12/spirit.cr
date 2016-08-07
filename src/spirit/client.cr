@@ -73,6 +73,13 @@ module Spirit
       UNIXSocket.open(@socket_file) do |sock|
         yield sock
       end
+
+    rescue ex : Errno
+      if ex.errno == Errno::ECONNREFUSED
+        STDERR.puts ex.message
+        STDERR.puts "Are you sure the daemon is listening?"
+        exit 1
+      end
     end
   end
 end
