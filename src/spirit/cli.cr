@@ -12,16 +12,16 @@ module Spirit
     def run
       case @argv.size
       when 1
-        parse_instance_command
+        parse_instance_command(@argv[0])
       when 2
-        parse_process_command
+        parse_process_command(@argv[0], @argv[1])
       else
         display_help
       end
     end
 
-    def parse_instance_command
-      case @argv[0]
+    def parse_instance_command(command)
+      case command
       when "daemon"
         Daemon.new(@socket_file).run
       when "list"
@@ -35,10 +35,8 @@ module Spirit
       end
     end
 
-    def parse_process_command
-      process_name = @argv[0]
-
-      case @argv[1]
+    def parse_process_command(process_name, command)
+      case command
       when "status"
         pp Client.new(@socket_file).status(process_name)
       when "start"
