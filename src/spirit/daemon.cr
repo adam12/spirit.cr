@@ -5,7 +5,10 @@ require "./process_registry"
 
 module Spirit
   class Daemon
+    getter channel
+
     def initialize(@socket_file : String)
+      @channel = Channel(Int32).new
     end
 
     def run
@@ -20,12 +23,38 @@ module Spirit
     def load_process_configs
       Dir.glob("./config/*.conf") do |config_file|
         process = Spirit::Process.new_from_file(config_file)
-        ProcessRegistry.instance.register(process)
 
-        process.start
-        pp process
+        process.run do |output, error|
+          spawn do
+            spawn do
+              while process_output = output.gets
+                puts process_output
+              end
+            end
+
+            spawn do
+              while process_error = error.gets
+                puts process_error
+              end
+            end
+
+            # Wait for exit
+            status = process.wait
+            @channel.send(process.pid)
+          end
+        end
+
+        ProcessRegistry.instance.register(process)
       end
     end
+
+    # def watch_for_ended_processes
+    #   if ended_pid = @channel.receive
+    #     ended_process = ProcessRegistry.find_with_pid(ended_pid)
+
+    #     if id = 
+    #   end
+    # end
 
     def accept_connections(server)
       while (sock = server.accept)

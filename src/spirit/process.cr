@@ -5,16 +5,17 @@ module Spirit
     getter exec, name, working_directory, state, respawns
 
     @name : String
-    @pid : Int32?
     @started_at : Time?
     @respawns = 0
     @state = "stopped"
     @exec : String
     @working_directory = "/"
     @config_file : String
+    @status : ::Process::Status?
 
     def initialize(@name, @exec, @config_file)
       @name = File.basename(@name, ".conf")
+      @process = ::Process.new(exec, chdir: working_directory, shell: true, input: false, output: nil, error: nil)
     end
 
     def uptime
@@ -25,35 +26,16 @@ module Spirit
       # started at > file mtime => reload
     end
 
-    def start
-      r, w = IO.pipe
+    def wait
+      @status ||= @process.wait
+    end
 
-      child = fork do
-        r.close
+    def pid
+      @process.pid
+    end
 
-        loop do
-          ::Process.run(exec, chdir: working_directory) do |proc|
-            w.puts("running")
-          end
-
-          sleep 1 # Dont' respawn too quickly
-          @respawns += 1
-        end
-      end
-
-      @started_at = Time.now
-      @state = "running"
-      @pid = child.pid
-
-      Signal::INT.trap do
-        child.kill
-      end
-
-      spawn do
-        while (line = r.gets)
-          pp line
-        end
-      end
+    def run
+      yield @process.output, @process.error
     end
 
     def self.new_from_file(file)
