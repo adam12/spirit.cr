@@ -2,7 +2,7 @@ require "ini"
 
 module Spirit
   class Process
-    getter exec, name, working_directory
+    getter exec, name, working_directory, state, respawns
 
     @name : String
     @pid : Int32?

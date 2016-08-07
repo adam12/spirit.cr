@@ -30,20 +30,22 @@ module Spirit
     def accept_connections(server)
       while (sock = server.accept)
         spawn do
-          line = Message.read(sock)
-          parts = line.not_nil!.split(" ")
-          command = parts[0]
-          arguments = parts[1..-1]
+          message = Message.read(sock)
+          next if message.nil?
 
-          pp command, arguments
+          method = message["method"].not_nil!
+          params = message["params"]
 
-          case command
-          when "PING"
-            Message.write(sock, "PONG")
-          when "LIST"
-            Message.write(sock, ProcessRegistry.instance.all.inspect)
+          case method
+          when "ping"
+            Message.write(sock, { result: "PONG", error: nil })
+          when "list"
+            payload = ProcessRegistry.instance.all.map do |p|
+              { name: p.name, pid: p.pid, state: p.state, respawns: p.respawns }
+            end
+            Message.write(sock, { result: payload, error: nil })
           else
-            Message.write(sock, "BAR")
+            Message.write(sock, { result: "BAR", error: nil })
           end
 
           sock.close
