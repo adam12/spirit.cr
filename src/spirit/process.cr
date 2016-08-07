@@ -23,7 +23,9 @@ module Spirit
     end
 
     def stale?
-      # started at > file mtime => reload
+      return if @started_at.nil?
+
+      @started_at > File.lstat(@config_file).mtime
     end
 
     def wait
