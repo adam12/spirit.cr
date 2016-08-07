@@ -14,6 +14,7 @@ module Spirit
     @config_file : String
 
     def initialize(@name, @exec, @config_file)
+      @name = File.basename(@name, ".conf")
     end
 
     def uptime
