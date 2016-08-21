@@ -57,7 +57,20 @@ module Spirit
     end
 
     def display_help
-      puts "Help"
+      STDERR.puts <<-EOM
+      Usage:
+
+          #{program_name} daemon
+          #{program_name} list
+          #{program_name} rescan
+          #{program_name} ping
+
+          #{program_name} [daemon-id] status|start|stop|restart|log|tail
+      EOM
+    end
+
+    def program_name
+      File.basename(PROGRAM_NAME)
     end
   end
 end
