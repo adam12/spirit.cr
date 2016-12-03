@@ -25,6 +25,10 @@ class ProcessRegistry
     @processes << process
   end
 
+  def remove_with_pid(pid)
+    @processes = @processes.reject {|p| p.pid == pid }
+  end
+
   def self.instance
     INSTANCE
   end

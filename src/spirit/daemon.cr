@@ -16,6 +16,10 @@ module Spirit
 
       load_process_configs
 
+      spawn do
+        watch_for_ended_processes
+      end
+
       server = UNIXServer.new(@socket_file)
       accept_connections(server)
     end
@@ -56,13 +60,13 @@ module Spirit
       end
     end
 
-    # def watch_for_ended_processes
-    #   if ended_pid = @channel.receive
-    #     ended_process = ProcessRegistry.find_with_pid(ended_pid)
+    def watch_for_ended_processes
+      while (ended_pid = @channel.receive)
+        puts "Pid #{ended_pid} ended"
 
-    #     if id =
-    #   end
-    # end
+        ProcessRegistry.instance.remove_with_pid(ended_pid)
+      end
+    end
 
     def accept_connections(server)
       while (sock = server.accept)
