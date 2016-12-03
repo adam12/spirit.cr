@@ -21,6 +21,10 @@ module Spirit
       end
 
       server = UNIXServer.new(@socket_file)
+
+      Signal::INT.trap { exit(0) }
+      at_exit { server.close }
+
       accept_connections(server)
     end
 
