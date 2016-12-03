@@ -27,14 +27,22 @@ module Spirit
         process.run do |output, error|
           spawn do
             spawn do
-              while process_output = output.gets
-                puts process_output
+              begin
+                while process_output = output.gets
+                  puts process_output
+                end
+              rescue ex : Errno
+                puts "STDOUT closed"
               end
             end
 
             spawn do
-              while process_error = error.gets
-                puts process_error
+              begin
+                while process_error = error.gets
+                  puts process_error
+                end
+              rescue ex : Errno
+                puts "STDERR closed"
               end
             end
 
