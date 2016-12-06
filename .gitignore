@@ -2,6 +2,7 @@
 /libs/
 /.crystal/
 /.shards/
-
-
 config
+/tmp/
+/dist/
+notes.md
