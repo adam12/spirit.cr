@@ -10,7 +10,7 @@ require "./commands/restart"
 module Spirit
   class CLI
     def initialize(@argv : Array(String))
-      @socket_file = "./socket"
+      @socket_file = File.join(Spirit.config_folder, "sock")
     end
 
     def run
