@@ -1,6 +1,8 @@
 # Spirit
 _Giving life to a user's daemons_
 
+**This project is deprecated in favour of [Spirit.go](https://github.com/adam12/spirit.go)**
+
 Lets be honest, I never started out wanting to make a process manager... I just
 wanted to deploy my code and run my applications.
 
@@ -10,11 +12,11 @@ are already so many).
 
 ## Goals
 
-- Light memory usage 
+- Light memory usage
 - Dependency free
 - Single binary
 - Single user
-- INI file configuration
+- Procfile configuration
 - Easy generation of boot scripts
 - Run from crontab @reboot
 - Non-forking processes only
@@ -32,6 +34,7 @@ TODO: Write installation instructions here
 ## Usage
 
 	spirit daemon
+	spirit quit
 
 	spirit list
 	spirit rescan
